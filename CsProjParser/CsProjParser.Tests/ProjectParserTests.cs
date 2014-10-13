@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CsProjParser;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -110,6 +109,17 @@ namespace CsProjParser.Tests
             var result = target.Parse("fixture1.csproj");
 
             Assert.IsFalse(result.AssemblyReferences.Any(c => c.Name.StartsWith("System.")));
+        }
+
+        [TestMethod]
+        [DeploymentItem("fixture1.csproj")]
+        public void Parse_fixture1_DoesNotIncludeAssemblyReferencesNamedSystem()
+        {
+            var target = new ProjectParser();
+
+            var result = target.Parse("fixture1.csproj");
+
+            Assert.IsFalse(result.AssemblyReferences.Any(c => c.Name == "System"));
         }
     }
 }
