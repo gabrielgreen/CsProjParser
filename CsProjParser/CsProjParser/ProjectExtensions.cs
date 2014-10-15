@@ -11,26 +11,36 @@ namespace CsProjParser
             var tree = new Tree<Item>();
 
             tree.Nodes.Add(
-                new Project
-                {
-                    Name = project.Name
+                new Node<Item> 
+                { 
+                    Value = new Project { Name = project.Name } 
                 });
 
-            tree.Nodes.AddRange(project.AssemblyReferences.Select(c =>
-                new Assembly
-                {
-                    Name = c.Name
+            tree.Nodes.AddRange(project.AssemblyReferences.Select(c => 
+                new Node<Item> 
+                { 
+                    Value = new Assembly { Name = c.Name } 
                 }));
 
-            tree.Nodes.AddRange(project.ProjectReferences.Select(c =>
-                new Project
-                {
-                    Name = c.Name
+            tree.Nodes.AddRange(project.ProjectReferences.Select(c => 
+                new Node<Item> 
+                { 
+                    Value = new Project { Name = c.Name } 
                 }));
 
-            tree.Edges.AddRange(project.AssemblyReferences.Select(c => Tuple.Create<Item, Item>(project, c)));
+            tree.Edges.AddRange(project.AssemblyReferences.Select(c => 
+                new Edge<Item> 
+                { 
+                    Item1 = tree.Nodes.First(d => d.Value.Equals(project)), 
+                    Item2 = tree.Nodes.First(d => d.Value.Equals(c)),
+                }));
 
-            tree.Edges.AddRange(project.ProjectReferences.Select(c => Tuple.Create<Item, Item>(project, c)));
+            tree.Edges.AddRange(project.ProjectReferences.Select(c =>
+                new Edge<Item>
+                {
+                    Item1 = tree.Nodes.First(d => d.Value.Equals(project)),
+                    Item2 = tree.Nodes.First(d => d.Value.Equals(c)),
+                }));
 
             return tree;
         }
